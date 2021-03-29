@@ -242,8 +242,8 @@ class ReservationController extends Controller
                     // removendo as reservas
                     $reservations = Reservation::where('id_area', $id)
                     ->whereBetween('reservation_date', [
-                        $date.'00:00:00',
-                        $date.'23:59:59'
+                        $date.' 00:00:00',
+                        $date.' 23:59:59'
                     ])
                     ->get();
 
@@ -258,9 +258,6 @@ class ReservationController extends Controller
                             $array['list'][] = $timeItem;
                         }
                     }
-                    print_r($toRemove);
-
-                    
                 }
 
             } else {
