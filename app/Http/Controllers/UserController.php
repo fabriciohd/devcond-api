@@ -31,4 +31,33 @@ class UserController extends Controller
 
         return $array;
     }
+
+    public function update($id, Request $request) {
+        $array = ['error' => ''];
+
+        $loggedUser = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'cpf' => 'required|digits:11',
+        ]);
+
+        if (!$validator->fails()) {
+            if ($loggedUser['id'] == $id) {
+                User::where('id', $id)->update([
+                    'name' => $request->input('name'),
+                    'email' => $request->input('email'),
+                    'cpf' => $request->input('cpf'),
+                ]);
+            } else {
+                $array['error'] = 'ID não corresponde ao usuário logado';
+                return $array;
+            }
+        } else {
+            $array['error'] = $validator->errors()->first();
+            return $array;
+        }
+        
+        return $array;
+    }
 }
