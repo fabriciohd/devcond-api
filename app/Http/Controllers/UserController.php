@@ -15,14 +15,19 @@ class UserController extends Controller
 
         $loggedUser = auth()->user();
         $user = User::find($id);
-        $array['user'] = [
-            'name' => $user['name'],
-            'email' => $user['email'] 
-        ];
+        if ($user) {
+            $array['user'] = [
+                'name' => $user['name'],
+                'email' => $user['email'] 
+            ];
 
-        if ($loggedUser['id'] == $id) {
-            $array['user']['cpf'] = $user['cpf'] ;
-        }        
+            if ($loggedUser['id'] == $id) {
+                $array['user']['cpf'] = $user['cpf'] ;
+            }
+        } else {
+            $array['error'] = 'Usuário não encontrado';
+            return $array;
+        }
 
         return $array;
     }
