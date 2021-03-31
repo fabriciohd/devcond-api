@@ -60,4 +60,36 @@ class UserController extends Controller
         
         return $array;
     }
+
+    public function newPassword($id, Request $request) {
+        $array = ['error' => ''];
+
+        $loggedUser = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required',
+            'new_password_confirm' => 'required|same:new_password',
+        ]);
+        $isValidUser = auth()->attempt([
+            'id' => $id,
+            'password' => $request->input('current_password')
+        ]);
+
+        if (!$validator->fails()) {
+            if ($loggedUser['id'] == $id && $isValidUser) {
+                $hash = password_hash($request->input('new_password'), PASSWORD_DEFAULT);
+                User::where('id', $id)->update([
+                    'password' => $hash
+                ]);
+            } else {
+                $array['error'] = 'ID/Senha Atual não corresponde ao usuário logado';
+                return $array;
+            }    
+        } else {
+            $array['error'] = $validator->errors()->first();
+            return $array;
+        }
+
+        return $array;
+    }
 }
